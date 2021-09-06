@@ -36,7 +36,7 @@ public class Board {
 
         if(oldPiece.getAffiliation() != newPiece.getAffiliation()){
 
-            boolean isValid = true;
+            //boolean isValid = true;
             int distanceX = abs(newX - oldX);
             int distanceY = abs(newY - oldY);
             // the entire switch case is dedicated to exposing that a move is illegal, otherwise it'll be treated as legal
@@ -46,13 +46,12 @@ public class Board {
                     // can only move in straight lines, just need to check from closest for farthest away if there's something in the way
                     // most likely requires for loop
                     if (distanceX > 0 && distanceY > 0) {
-                    	isValid = false;
-                    	break;
+                    	return false;
                     }
                     if (distanceX > 0) {
                         for (int i = oldX + (newX-oldX)/(distanceX);  i>0 || i<7; i+=(newX-oldX)/(distanceX) ) {
                             if (boardState[oldY][i].getType() != PieceInfo.BLANK && i!=newX) {
-                            	isValid = false;
+                            	return false;
                             	}//check if something here
                             if (i==newX) break;
                         }
@@ -60,7 +59,7 @@ public class Board {
                     if (distanceY > 0) {
                         for (int i = oldY + (newY-oldY)/(distanceY);  i>0 || i<7; i+=(newY-oldY)/(distanceY) ) {
                             if (boardState[i][oldX].getType() != PieceInfo.BLANK && i!=newY) {
-                            	isValid = false;
+                            	return false;
                             	}//check if something here
                             if (i==newY) break;
                         }
@@ -79,10 +78,10 @@ public class Board {
                 case KING:
                     // has tiny legs and can only move one tile at a time in any direction
                     if (distanceX > 1 || distanceY > 1) {
-                        isValid = false; // if the king is requested to move further than 1 tile, tis invalid move
+                        return false; // if the king is requested to move further than 1 tile, tis invalid move
                     }
                     if (newPiece.getAffiliation() == oldPiece.getAffiliation()) {
-                        isValid = false; // the king may not step on his underlings.
+                        return false; // the king may not step on his underlings.
                     }
 
                     for(int y = 0; y < 8; y++){
@@ -91,7 +90,7 @@ public class Board {
 
                             if(boardState[y][x].getAffiliation() != oldPiece.getAffiliation())
                                 if(isMoveValid(y, x, newY, newX))
-                                    isValid = false;    // this checks if any opposite pieces can move to the kings new spot. the kind cannot put himself into check.
+                                    return false;    // this checks if any opposite pieces can move to the kings new spot. the kind cannot put himself into check.
                         }
                     }
                     break;
@@ -101,26 +100,26 @@ public class Board {
                     //int distanceY = abs(newY - oldY);
 
                     if(newY - oldY > 0 && oldPiece.getAffiliation() == PieceInfo.BLACK) // Pawns cannot move backwards
-                        isValid = false;
+                        return false;
                     if(newY - oldY < 0 && oldPiece.getAffiliation() == PieceInfo.WHITE)
-                        isValid = false;
+                        return false;
 
                     if(!oldPiece.getHasMoved()) { // First move bonus check
                         if (distanceY > 2) {
-                            isValid = false;
+                            return false;
                         }
                     } else {
                         if (distanceY > 1) {
-                            isValid = false;
+                            return false;
                         }
                     }
 
                     if(distanceY == 1){ // Taking a piece
                         if(distanceX > 0){
                             if(newPiece.getType() == PieceInfo.BLANK)
-                                isValid = false;
+                                return false;
                             if(distanceX > 1)
-                                isValid = false;
+                                return false;
                         }
                     }
 
@@ -129,12 +128,12 @@ public class Board {
                         if(oldPiece.getAffiliation() == PieceInfo.WHITE){
 
                             if(boardState[oldY+1][oldX].getType() != PieceInfo.BLANK)
-                                isValid = false;
+                                return false;
                         }
                         if(oldPiece.getAffiliation() == PieceInfo.BLACK){
 
                             if(boardState[oldY-1][oldX].getType() != PieceInfo.BLANK)
-                                isValid = false;
+                                return false;
                         }
                     }
 
@@ -144,7 +143,7 @@ public class Board {
 
                     break;
             }
-            return isValid;
+            return true;
         }
 
         return false;
