@@ -2,21 +2,30 @@ import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/** TODO: Change movePiece from boolean to integer with return codes:
- * 0 = No errors; move made
- * 1 = invalid move
- * 2 = white wins
- * 3 = black wins
- **/
-
 public class Board {
 
-    private Piece boardState[][] = new Piece[8][8];
-    private Piece tempBoard[][] = new Piece[8][8];
-    /*  Intellij keeps noting that the above declarations are of "C-style array declaration" the two declarations below may be a possible fix to this.
-        Also, it seems memory inefficient to have a carbon copy of boardState stored in another variable, although this could obviously be due to Java wackiness.
-        private Piece[][] boardState = new Piece[8][8];
-        private Piece[][] tempBoard = new Piece[8][8];  */
+    private Piece[][] boardState = new Piece[8][8];
+
+    public Board() {
+
+        boardState = new Piece[][]{
+                {new Piece(PieceInfo.ROOK, PieceInfo.WHITE), new Piece(PieceInfo.KNIGHT, PieceInfo.WHITE), new Piece(PieceInfo.BISHOP, PieceInfo.WHITE), new Piece(PieceInfo.QUEEN, PieceInfo.WHITE), new Piece(PieceInfo.KING, PieceInfo.WHITE), new Piece(PieceInfo.BISHOP, PieceInfo.WHITE), new Piece(PieceInfo.KNIGHT, PieceInfo.WHITE), new Piece(PieceInfo.ROOK, PieceInfo.WHITE)},
+                {new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE),},
+                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
+                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
+                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
+                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
+                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
+                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
+                {new Piece(PieceInfo.PAWN, PieceInfo.BLACK), new Piece(PieceInfo.PAWN, PieceInfo.BLACK), new Piece(PieceInfo.PAWN, PieceInfo.BLACK), new Piece(PieceInfo.PAWN, PieceInfo.BLACK), new Piece(PieceInfo.PAWN, PieceInfo.BLACK), new Piece(PieceInfo.PAWN, PieceInfo.BLACK), new Piece(PieceInfo.PAWN, PieceInfo.BLACK), new Piece(PieceInfo.PAWN, PieceInfo.BLACK),},
+                {new Piece(PieceInfo.ROOK, PieceInfo.BLACK), new Piece(PieceInfo.KNIGHT, PieceInfo.BLACK), new Piece(PieceInfo.BISHOP, PieceInfo.BLACK), new Piece(PieceInfo.QUEEN, PieceInfo.BLACK), new Piece(PieceInfo.KING, PieceInfo.BLACK), new Piece(PieceInfo.BISHOP, PieceInfo.BLACK), new Piece(PieceInfo.KNIGHT, PieceInfo.BLACK), new Piece(PieceInfo.ROOK, PieceInfo.BLACK)}
+        };
+    }
+
+    public Board(Piece[][] _boardState){
+
+        boardState = _boardState;
+    }
 
     public int movePiece(int oldY, int oldX, int newY, int newX){
 
@@ -24,7 +33,7 @@ public class Board {
 
         if(oldPiece.getType() != PieceInfo.BLANK && isMoveValid(oldY, oldX, newY, newX)){
 
-            tempBoard = boardState;
+            Piece[][] tempBoard = boardState;
             tempBoard[oldY][oldX] = new Piece();
             tempBoard[newY][newX] = oldPiece;
 
@@ -53,31 +62,61 @@ public class Board {
                 return 0; //was previously true
             }
 
+            for(int y = 0; y < 7; y++){ // this is bad code //TODO: Make this good code... soon(tm)
+
+                for(int x = 0; x < 7; x++){
+
+                    if(boardState[y][x].getAffiliation() != oldPiece.getAffiliation() && boardState[y][x].getType() == PieceInfo.KING){ // this grabs the opposite king
+
+                        kingX = x;
+                        kingY = y;
+                    }
+                }
+            }
+
+            if(isKingInCheckMate(kingX, kingY)){ // if opposite king is in check
+
+                switch(boardState[kingY][kingX].getAffiliation()){
+
+                    case BLACK: // black is in check; white won
+                        return 2;
+                    case WHITE: // white is in check; black won
+                        return 3;
+                }
+            }
+
             return 1; //was false
         }
 
         return 1; //was false
     }
 
-    private ArrayList<int[]> calcValidKnightMoves(int oldX, int oldY) {
+    private ArrayList<ArrayList<Integer>> calcValidKnightMoves(int oldX, int oldY) {
         int[] currentLoc = {oldX, oldY};
-        ArrayList<int[]> validGlobalCoords = new ArrayList<>();
-        validGlobalCoords.clear(); //Almost certain this isn't required, but I am clearing it just to make sure specifically for mem management
+        ArrayList<ArrayList<Integer>> validGlobalCoords = new ArrayList<>();
+        //validGlobalCoords.clear(); //Almost certain this isn't required, but I am clearing it just to make sure specifically for mem management
         int[][] validLocalCoords = {{-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2}, {-1,-2}, {-2,-1}, {-2,1}};
-        int[] tempLoc = new int[2];
+        //int[] tempLoc = new int[2]; fucko boingo
+        ArrayList<Integer> tempLoc = new ArrayList<>();
         for (int i = 0; i<validLocalCoords.length; i++) {
-            for(int a = 0; a<2; a++) { // variable a should NEVER be 2 only 0 and 1.
+            for(int a = 0; a<=1; a++) { // variable a should NEVER be 2 only 0 and 1.
                 if ((validLocalCoords[i][a] += currentLoc[a]) >=  0 && (validLocalCoords[i][a] += currentLoc[a]) <= 7){
-                    tempLoc[a] = validLocalCoords[i][a] += currentLoc[a]; //this line ensures that the math is done on both X and Y and is put into tempLoc in the correct order
+                    tempLoc.set(a, validLocalCoords[i][a] += currentLoc[a]); //this line ensures that the math is done on both X and Y and is put into tempLoc in the correct order
+                    //System.out.println(tempLoc[a]);
                 }
-                validGlobalCoords.add(tempLoc);
+                System.out.println("tempLoc index"+a+": "+tempLoc.get(a));
+                validGlobalCoords.add(tempLoc); // FUCKY WUCKY
             }
         }
-
+        for (int c = 0; c < validGlobalCoords.size(); c++ ){
+            for (int b = 0; b<=1; b++) {
+                System.out.println("validGlobalCoords: "+c+"'"+b+": "+validGlobalCoords.get(c).get(b)+", "+validGlobalCoords.get(c).get(b));
+            }
+        }
         return validGlobalCoords; //this returns the required data-type, allows for easy checks eg: looking at the 2 valid board location would look like "validGlobalCoords.get(1)" which will return an array
     }
 
-    private boolean isMoveValid(int oldY, int oldX, int newY, int newX) {
+    public boolean isMoveValid(int oldY, int oldX, int newY, int newX) {
 
         if(oldY < 0 || oldY > 7 || oldX < 0 || oldX > 7 || newY < 0 || newY > 7 || newX < 0 || newX > 7) // verify in range
             return false;
@@ -124,15 +163,16 @@ public class Board {
                 case KNIGHT:
                     // has the weird L moves, can go over enemies and friendlies
                     int[] userSel = {oldX,oldY}; //dunno if this technically works due to the weirdness of arrays. Might need to be ArrayList
+                    ArrayList<ArrayList<Integer>> locStorageArr = new ArrayList<>();
                     ArrayList<int[]> locStorage = new ArrayList<>();
-                    locStorage.clear(); //another just-in-case type deal where I'm pretty sure it's unnecessary but to make sure mem is handled well
-                    locStorage = calcValidKnightMoves(oldX,oldY);
+                    //locStorage.clear(); //another just-in-case type deal where I'm pretty sure it's unnecessary but to make sure mem is handled well
+                    locStorageArr = calcValidKnightMoves(oldX,oldY);
                     boolean validUserSelection = false;
-                    for (int i = 0; i<locStorage.size(); i++) {
-                        if (Arrays.equals(locStorage.get(i), userSel)) {
+                    for (int[] ints : locStorage) {
+                        if (Arrays.equals(ints, userSel)) {
                             validUserSelection = true;//this just checks to see if what the user selected IS one of the available legal locations for the knight pretty sure this is technically unnecessary
                         }
-                        if (boardState[locStorage.get(i)[0]][locStorage.get(i)[1]].getAffiliation() == boardState[oldX][oldY].getAffiliation()) { //check if both pieces are of same affiliation, therefore making the move invalid
+                        if (boardState[ints[0]][ints[1]].getAffiliation() == boardState[oldX][oldY].getAffiliation()) { //check if both pieces are of same affiliation, therefore making the move invalid
                             return false;
                         }
                     }
@@ -280,7 +320,7 @@ public class Board {
         return false;
     }
 
-    private boolean isKingInCheck(Piece[][] boardToCheck, PieceInfo kingColor, int kingX, int kingY){
+    public boolean isKingInCheck(Piece[][] boardToCheck, PieceInfo kingColor, int kingX, int kingY){
 
         for(int y = 0; y < 7; y++)
             for(int x = 0; x < 7; x++) // Iterate through the board
@@ -290,9 +330,19 @@ public class Board {
 
         return false; // The king is not in check
     }
-    // I do think that this can be done in a way that is technically more efficient, we constantly run through the same method multiple times in one return statement, I also believe this will be completely broken once we move to valid moves returning integers instead of booleans.
+
     public boolean isKingInCheckMate(int kingX, int kingY){ // this is terrible, yes, but its efficient. So suck my nuts.
         //                                  left                          up                                                                                                       top left                                                                                                  right                                                                                                   below                                                                                               bottom right                                                                                             bottom left                                                                                                   top right
         return (isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX, kingY-1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX-1, kingY-1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX-1, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY-1) && !isMoveValid(kingX, kingY, kingX+1, kingY-1));
+    }
+
+    public Piece[][]  getBoardState(){
+
+        return boardState;
+    }
+
+    public void setBoardState(Piece[][] _boardState){
+
+        boardState = _boardState;
     }
 }

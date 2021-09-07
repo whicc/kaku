@@ -5,14 +5,66 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5796e8dd-fb68-4f0c-aecc-6121b171223d" name="Changes" comment="" />
-    <list id="e7cca105-87a6-41aa-97a0-ee750025e93e" name="Changes by Concavebark" comment="" />
+    <list id="a0548a90-e672-4999-9a8d-1b9584beb6ae" name="Changes by Concavebark" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/src/main/java/Board.java">
+      <ranges>
+        <range start1="2" end1="3" start2="2" end2="3" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="6" end1="8" start2="6" end2="9" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="9" end1="9" start2="10" end2="23" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="10" end1="11" start2="24" end2="30" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="16" end1="17" start2="35" end2="36" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="20" end1="21" start2="39" end2="40" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="23" end1="24" start2="42" end2="43" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="42" end1="43" start2="61" end2="62" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="45" end1="46" start2="64" end2="88" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="48" end1="49" start2="90" end2="91" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="51" end1="52" start2="93" end2="94" changelist="a0548a90-e672-4999-9a8d-1b9584beb6ae" />
+        <range start1="53" end1="55" start2="95" end2="97" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="56" end1="57" start2="98" end2="100" changelist="a0548a90-e672-4999-9a8d-1b9584beb6ae" />
+        <range start1="58" end1="59" start2="101" end2="102" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="60" end1="61" start2="103" end2="105" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="62" end1="65" start2="106" end2="108" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="67" end1="68" start2="110" end2="115" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="71" end1="72" start2="118" end2="119" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="84" end1="85" start2="131" end2="131" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="96" end1="97" start2="142" end2="143" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="101" end1="103" start2="147" end2="149" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="109" end1="111" start2="155" end2="157" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="119" end1="119" start2="165" end2="166" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="120" end1="129" start2="167" end2="173" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="130" end1="132" start2="174" end2="176" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="133" end1="133" start2="177" end2="180" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="138" end1="139" start2="185" end2="186" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="184" end1="185" start2="231" end2="232" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="186" end1="187" start2="233" end2="234" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="191" end1="192" start2="238" end2="239" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="194" end1="195" start2="241" end2="242" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="199" end1="200" start2="246" end2="247" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="202" end1="203" start2="249" end2="250" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="209" end1="210" start2="256" end2="257" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="212" end1="213" start2="259" end2="260" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="240" end1="241" start2="287" end2="288" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="275" end1="276" start2="322" end2="323" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="287" end1="288" start2="334" end2="335" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+        <range start1="290" end1="290" start2="337" end2="347" changelist="5796e8dd-fb68-4f0c-aecc-6121b171223d" />
+      </ranges>
+    </file>
   </component>
   <component name="ProjectId" id="1xmlrRWVYyrpRs4m6wIpYiu69NX" />
   <component name="ProjectViewState">
@@ -23,6 +75,20 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="codeWithMe.voiceChat.enabledByDefault" value="false" />
+  </component>
+  <component name="RunManager">
+    <configuration name="TestConditions" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TestConditions" />
+      <module name="kaku" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.TestConditions" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
