@@ -43,8 +43,6 @@ public class Board {
             switch(oldPiece.getType()){
 
                 case ROOK:
-                    // can only move in straight lines, just need to check from closest for farthest away if there's something in the way
-                    // most likely requires for loop
                     if (distanceX > 0 && distanceY > 0) {
                     	return false;
                     }
@@ -68,15 +66,36 @@ public class Board {
                     break;
                 case KNIGHT:
                     // has the weird L moves, can go over enemies and friendlies
+
                     break;
                 case BISHOP:
-                    // can only move in diagonals as long as there's nothing in the way
+                    if(newX-oldX != newY-oldY)
+                        return false; // x and y have to be the same
+
+                    int direction = (newX-oldX)/((newX-oldX)*-1); // get the direction to iterate
+
+                    int checkX = oldX + direction;
+                    int checkY = oldY + direction;
+                    while(checkX < 8 && checkY < 8 && checkX > 0 && checkY > 0) {
+
+                        if (boardState[checkY][checkX].getType() != PieceInfo.BLANK && checkX != newX)
+                            return false; // Bishop cannot pass through any pieces
+
+                        if(boardState[checkY][checkX].getAffiliation() == oldPiece.getAffiliation() && checkX == newX)
+                            return false; // Bishop cannot end on a piece of the same affiliation
+
+                        if(checkX == newX)
+                            break; // Reached destination without issues
+
+                        checkX += direction; // Iterate to next spot in path
+                        checkY += direction;
+                    }
+
                     break;
                 case QUEEN:
                     // can move like every other piece besides the knight, Queen will require the most amount of math
                     break;
                 case KING:
-                    // has tiny legs and can only move one tile at a time in any direction
                     if (distanceX > 1 || distanceY > 1) {
                         return false; // if the king is requested to move further than 1 tile, tis invalid move
                     }
@@ -95,10 +114,6 @@ public class Board {
                     }
                     break;
                 case PAWN:
-
-                    //int distanceX = abs(newX - oldX);
-                    //int distanceY = abs(newY - oldY);
-
                     if(newY - oldY > 0 && oldPiece.getAffiliation() == PieceInfo.BLACK) // Pawns cannot move backwards
                         return false;
                     if(newY - oldY < 0 && oldPiece.getAffiliation() == PieceInfo.WHITE)
