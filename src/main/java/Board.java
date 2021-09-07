@@ -1,6 +1,8 @@
 import static java.lang.Math.abs;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Board {
 
@@ -90,27 +92,63 @@ public class Board {
 
         return 1; //was false
     }
+    static final int[][] validLocalCoords = {{-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2}, {-1,-2}, {-2,-1}, {-2,1}}; //This really shouldn't ever be changed
+    int[][] tempLocalCoords = {{-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2}, {-1,-2}, {-2,-1}, {-2,1}};
+    //a possible flaw in all of this is that when tempLoc gets overwritten, it gets overwritten in validGlobalCoords too, since a pointer is unavailable or garbage
+    private ArrayList<ArrayList<Integer>> calcValidKnightMovesArrLst(int oldX, int oldY) {
+        tempLocalCoords = validLocalCoords;
+        System.out.println("calcValidKnightMovesArrLst HAS BEEN CALLED");
+        ArrayList<Integer> currentLoc = new ArrayList<>(Arrays.asList(oldX,oldY));
+        ArrayList<ArrayList<Integer>> validGlobalCoords = new ArrayList<>(); // this is the x1. aka the largest container
+        ArrayList<Integer> tempLoc; // this is the new x8, aka the container that holds 2 integers
+        //System.out.println(validGlobalCoords.size());
+        for (int i = 0; i < tempLocalCoords.length; i++) {
+            tempLoc = new ArrayList<Integer>();
+            for(int a = 0; a< tempLocalCoords[i].length; a++) {
+                int sex = tempLocalCoords[i][a];
+                int cum = currentLoc.get(a);
+                int comp = cum + sex;
+                if (comp >= 0 && comp <= 7) {
+                    System.out.println("tempLocalCoords: "+Arrays.toString(tempLocalCoords[i]));
+                    System.out.println("validLocalCoords: "+Arrays.toString(validLocalCoords[i]));
+                    tempLoc.add(tempLocalCoords[i][a] += currentLoc.get(a));
+                }
 
-    private ArrayList<ArrayList<Integer>> calcValidKnightMoves(int oldX, int oldY) {
+            }
+            if (tempLoc.size() == 2) {
+                System.out.println("tempLoc: " + Arrays.toString(tempLoc.toArray()));
+                validGlobalCoords.add(tempLoc);
+            }
+            //tempLoc.clear();
+
+        }
+        System.out.println("ArrLst: " + Arrays.toString(validGlobalCoords.toArray()));
+        return validGlobalCoords;
+    }
+
+    // FOR FUTURE ME, THE ISSUE IS THAT TEMPLOC IS NOT BEING UPDATED CORRECTLY AND NEEDS TO BE FIXED ACCORDINGLY, TEMPLOC NEEDS TO BE OF A DYNAMIC TYPE AND NOT AN ARRAY
+    private ArrayList<int[]> calcValidKnightMoves(int oldX, int oldY) {
         int[] currentLoc = {oldX, oldY};
-        ArrayList<ArrayList<Integer>> validGlobalCoords = new ArrayList<>();
+        ArrayList<int[]> validGlobalCoords = new ArrayList<>();
         //validGlobalCoords.clear(); //Almost certain this isn't required, but I am clearing it just to make sure specifically for mem management
-        int[][] validLocalCoords = {{-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2}, {-1,-2}, {-2,-1}, {-2,1}};
-        //int[] tempLoc = new int[2]; fucko boingo
-        ArrayList<Integer> tempLoc = new ArrayList<>();
-        for (int i = 0; i<validLocalCoords.length; i++) {
-            for(int a = 0; a<=1; a++) { // variable a should NEVER be 2 only 0 and 1.
-                if ((validLocalCoords[i][a] += currentLoc[a]) >=  0 && (validLocalCoords[i][a] += currentLoc[a]) <= 7){
-                    tempLoc.set(a, validLocalCoords[i][a] += currentLoc[a]); //this line ensures that the math is done on both X and Y and is put into tempLoc in the correct order
+        int[] tempLoc = new int[2]; //fucko boingo
+        //ArrayList<Integer> tempLoc = new ArrayList<>();
+        System.out.println(tempLocalCoords.length);
+        for (int i = 0; i< tempLocalCoords.length; i++) {
+            for(int a = 0; a<2; a++) { // variable a should NEVER be 2 only 0 and 1.
+                if ((tempLocalCoords[i][a] += currentLoc[a]) >=  0 && (tempLocalCoords[i][a] += currentLoc[a]) <= 7){
+                    //tempLoc.set(a, validLocalCoords[i][a] += currentLoc[a]); //this line ensures that the math is done on both X and Y and is put into tempLoc in the correct order
+                    tempLoc[a] = (tempLocalCoords[i][a] += currentLoc[a]);
                     //System.out.println(tempLoc[a]);
                 }
-                System.out.println("tempLoc index"+a+": "+tempLoc.get(a));
+                //System.out.println("tempLoc index"+a+": "+tempLoc.get(a));
+                System.out.println("tempLoc index"+a+": "+tempLoc[a]);
                 validGlobalCoords.add(tempLoc); // FUCKY WUCKY
             }
         }
         for (int c = 0; c < validGlobalCoords.size(); c++ ){
             for (int b = 0; b<=1; b++) {
-                System.out.println("validGlobalCoords: "+c+"'"+b+": "+validGlobalCoords.get(c).get(b)+", "+validGlobalCoords.get(c).get(b));
+                System.out.println("validGlobalCoords: "+c+"'"+b+": "+validGlobalCoords.get(c)[b]+", "+validGlobalCoords.get(c)[b]);
             }
         }
         return validGlobalCoords; //this returns the required data-type, allows for easy checks eg: looking at the 2 valid board location would look like "validGlobalCoords.get(1)" which will return an array
@@ -162,23 +200,37 @@ public class Board {
                     break;
                 case KNIGHT:
                     // has the weird L moves, can go over enemies and friendlies
-                    int[] userSel = {oldX,oldY}; //dunno if this technically works due to the weirdness of arrays. Might need to be ArrayList
-                    ArrayList<ArrayList<Integer>> locStorageArr = new ArrayList<>();
-                    ArrayList<int[]> locStorage = new ArrayList<>();
-                    //locStorage.clear(); //another just-in-case type deal where I'm pretty sure it's unnecessary but to make sure mem is handled well
-                    locStorageArr = calcValidKnightMoves(oldX,oldY);
+                    ArrayList<Integer> userSel = new ArrayList<>(Arrays.asList(newX,newY));
+                    ArrayList<ArrayList<Integer>> locStorage;
+                    locStorage = calcValidKnightMovesArrLst(oldX,oldY);
+                    System.out.println("Inside Knight: "+Arrays.toString(locStorage.toArray()));
+                    System.out.println(locStorage.size() + " : " + locStorage.get(0).size());
                     boolean validUserSelection = false;
-                    for (int[] ints : locStorage) {
-                        if (Arrays.equals(ints, userSel)) {
-                            validUserSelection = true;//this just checks to see if what the user selected IS one of the available legal locations for the knight pretty sure this is technically unnecessary
+                    System.out.println("userSel: "+Arrays.toString(userSel.toArray()));
+                    for (int i = 0; i < locStorage.size(); i++) {
+
+                        System.out.println("Current Index: " + i);
+                        if (Objects.equals(locStorage.get(i).get(0), userSel.get(0)) && Objects.equals(locStorage.get(i).get(1), userSel.get(1))) {
+                            System.out.println("Valid user check");
+                            validUserSelection = true;
+                            if (boardState[locStorage.get(i).get(1)][locStorage.get(i).get(0)].getAffiliation() == boardState[oldY][oldX].getAffiliation()) { //check if both pieces are of same affiliation, therefore making the move invalid
+                                System.out.println(boardState[locStorage.get(i).get(0)][locStorage.get(i).get(1)].getAffiliation() + " " + boardState[locStorage.get(i).get(0)][locStorage.get(i).get(1)].getType() + " :Compared against: " + boardState[oldY][oldX].getAffiliation() + " " + boardState[oldY][oldX].getType());
+                                System.out.println("X: "+locStorage.get(i).get(0));
+                                System.out.println("Y: "+locStorage.get(i).get(1));
+                                System.out.println("oldX: "+oldX);
+                                System.out.println("oldY: "+oldY);
+                                System.out.println(boardState[locStorage.get(i).get(0)][locStorage.get(i).get(1)].getAffiliation() == boardState[oldX][oldY].getAffiliation());
+                                System.out.println("boardState if statement check");
+                                return false;
+                            }
                         }
-                        if (boardState[ints[0]][ints[1]].getAffiliation() == boardState[oldX][oldY].getAffiliation()) { //check if both pieces are of same affiliation, therefore making the move invalid
-                            return false;
-                        }
+
                     }
                     if (!validUserSelection) {
+                        System.out.println("validUserSelection outcome: " + validUserSelection);
                         return false; //this is just the flag that is needed to ensure we check through all valid knight move locations and make sure the user selected a spot the knight can legally go to
                     }
+                    locStorage.clear();
                     break;
                 case BISHOP:
                     if(newX-oldX != newY-oldY)
@@ -319,7 +371,6 @@ public class Board {
 
         return false;
     }
-
     public boolean isKingInCheck(Piece[][] boardToCheck, PieceInfo kingColor, int kingX, int kingY){
 
         for(int y = 0; y < 7; y++)
@@ -330,7 +381,6 @@ public class Board {
 
         return false; // The king is not in check
     }
-
     public boolean isKingInCheckMate(int kingX, int kingY){ // this is terrible, yes, but its efficient. So suck my nuts.
         //                                  left                          up                                                                                                       top left                                                                                                  right                                                                                                   below                                                                                               bottom right                                                                                             bottom left                                                                                                   top right
         return (isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX, kingY-1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX-1, kingY-1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX-1, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY-1) && !isMoveValid(kingX, kingY, kingX+1, kingY-1));
