@@ -149,6 +149,7 @@ public class Board {
         for (int c = 0; c < validGlobalCoords.size(); c++ ){
             for (int b = 0; b<=1; b++) {
                 System.out.println("validGlobalCoords: "+c+"'"+b+": "+validGlobalCoords.get(c)[b]+", "+validGlobalCoords.get(c)[b]);
+
             }
         }
         return validGlobalCoords; //this returns the required data-type, allows for easy checks eg: looking at the 2 valid board location would look like "validGlobalCoords.get(1)" which will return an array
