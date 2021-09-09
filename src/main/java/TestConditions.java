@@ -23,10 +23,10 @@ public class TestConditions {
         returnCode[15] = board.movePiece(7,7,5,7);
 
         // Knights
-        returnCode[1] = board.movePiece(0,1,2,2); // WRONG
-        returnCode[6] = board.movePiece(0,6,2,5); // WRONG
-        returnCode[9] = board.movePiece(7,1,5,2); // WRONG
-        returnCode[14] = board.movePiece(7,6,5,5); // WRONG
+        returnCode[1] = board.movePiece(0,1,2,2); // FIXED
+        returnCode[6] = board.movePiece(0,6,2,5); // FIXED
+        returnCode[9] = board.movePiece(7,1,5,2); // FIXED
+        returnCode[14] = board.movePiece(7,6,5,5);// FIXED
 
         // Bishops
         returnCode[2] = board.movePiece(0,2,2,4);
