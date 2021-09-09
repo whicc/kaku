@@ -40,7 +40,7 @@ public class TestConditions {
                 //System.out.println("Index: " + i + " Expected return code is 0. Code received: " + returnCode[i]);
                 if(returnCode[i] != 0)
                     System.out.println("Mismatch at index: " + i + ". Expected output was 0. Output received was: " + returnCode[i]);
-            else
+                else
                 if(returnCode[i] != 1)
                     System.out.println("Mismatch at index: " + i + ". Expected output was 1. Output received was: " + returnCode[i]);
         }
