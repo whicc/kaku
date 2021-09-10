@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5796e8dd-fb68-4f0c-aecc-6121b171223d" name="Changes" comment="" />
-    <list id="a0548a90-e672-4999-9a8d-1b9584beb6ae" name="Changes by Concavebark" comment="" />
+    <list id="8cd3aad0-73bb-49c6-a09c-d126f27ca4c3" name="Changes by Concavebark" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,8 +32,8 @@
     <property name="codeWithMe.voiceChat.enabledByDefault" value="false" />
   </component>
   <component name="RunManager">
-    <configuration name="TestConditions" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TestConditions" />
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="OpenGlMain" />
       <module name="kaku" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -41,7 +41,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.TestConditions" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
