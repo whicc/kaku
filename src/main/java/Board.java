@@ -1,7 +1,7 @@
 import static java.lang.Math.abs;
 
 import java.util.ArrayList;
-import java.util.Arrays
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Board {
@@ -13,8 +13,6 @@ public class Board {
         boardState = new Piece[][]{
                 {new Piece(PieceInfo.ROOK, PieceInfo.WHITE), new Piece(PieceInfo.KNIGHT, PieceInfo.WHITE), new Piece(PieceInfo.BISHOP, PieceInfo.WHITE), new Piece(PieceInfo.QUEEN, PieceInfo.WHITE), new Piece(PieceInfo.KING, PieceInfo.WHITE), new Piece(PieceInfo.BISHOP, PieceInfo.WHITE), new Piece(PieceInfo.KNIGHT, PieceInfo.WHITE), new Piece(PieceInfo.ROOK, PieceInfo.WHITE)},
                 {new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE),},
-                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
-                {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
                 {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
                 {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
                 {new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece(), new Piece()},
@@ -92,68 +90,34 @@ public class Board {
 
         return 1; //was false
     }
+    /**validLocalCoords is specific for Knight move calculation, it's a list of where a Knight piece can legally move on the board,
+     * and this method is used to take the coordinates from a local perspective and globalize them,
+     * so we can use them to move the piece **/
     static final int[][] validLocalCoords = {{-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2}, {-1,-2}, {-2,-1}, {-2,1}}; //This really shouldn't ever be changed
-    int[][] tempLocalCoords = {{-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2}, {-1,-2}, {-2,-1}, {-2,1}};
+    //int[][] tempLocalCoords = {{-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2}, {-1,-2}, {-2,-1}, {-2,1}};
     //a possible flaw in all of this is that when tempLoc gets overwritten, it gets overwritten in validGlobalCoords too, since a pointer is unavailable or garbage
     private ArrayList<ArrayList<Integer>> calcValidKnightMovesArrLst(int oldX, int oldY) {
-        tempLocalCoords = validLocalCoords;
-        System.out.println("calcValidKnightMovesArrLst HAS BEEN CALLED");
+        //tempLocalCoords = validLocalCoords;
         ArrayList<Integer> currentLoc = new ArrayList<>(Arrays.asList(oldX,oldY));
-        ArrayList<ArrayList<Integer>> validGlobalCoords = new ArrayList<>(); // this is the x1. aka the largest container
-        ArrayList<Integer> tempLoc; // this is the new x8, aka the container that holds 2 integers
-        //System.out.println(validGlobalCoords.size());
-        for (int i = 0; i < tempLocalCoords.length; i++) {
+        ArrayList<ArrayList<Integer>> validGlobalCoords = new ArrayList<>();
+        ArrayList<Integer> tempLoc;
+        for (int i = 0; i < validLocalCoords.length; i++) { // NOTE: Leaving tempLocalCoords in just in case as I thought I might previously need it although the current setup, using validLocalCoords seems to work just fine in testing
             tempLoc = new ArrayList<Integer>();
-            for(int a = 0; a< tempLocalCoords[i].length; a++) {
-                int sex = tempLocalCoords[i][a];
-                int cum = currentLoc.get(a);
-                int comp = cum + sex;
-                if (comp >= 0 && comp <= 7) {
-                    System.out.println("tempLocalCoords: "+Arrays.toString(tempLocalCoords[i]));
-                    System.out.println("validLocalCoords: "+Arrays.toString(validLocalCoords[i]));
-                    tempLoc.add(tempLocalCoords[i][a] += currentLoc.get(a));
+            for(int a = 0; a< validLocalCoords[i].length; a++) {
+                int tempIntStorage = validLocalCoords[i][a];
+                int currentLocIntStorage = currentLoc.get(a);
+                int compareLocWValid = currentLocIntStorage + tempIntStorage;
+                if (compareLocWValid >= 0 && compareLocWValid <= 7) {
+                    tempLoc.add(validLocalCoords[i][a] + currentLoc.get(a));
                 }
-
             }
             if (tempLoc.size() == 2) {
-                System.out.println("tempLoc: " + Arrays.toString(tempLoc.toArray()));
                 validGlobalCoords.add(tempLoc);
             }
-            //tempLoc.clear();
-
         }
-        System.out.println("ArrLst: " + Arrays.toString(validGlobalCoords.toArray()));
         return validGlobalCoords;
     }
-
-    // FOR FUTURE ME, THE ISSUE IS THAT TEMPLOC IS NOT BEING UPDATED CORRECTLY AND NEEDS TO BE FIXED ACCORDINGLY, TEMPLOC NEEDS TO BE OF A DYNAMIC TYPE AND NOT AN ARRAY
-    private ArrayList<int[]> calcValidKnightMoves(int oldX, int oldY) {
-        int[] currentLoc = {oldX, oldY};
-        ArrayList<int[]> validGlobalCoords = new ArrayList<>();
-        //validGlobalCoords.clear(); //Almost certain this isn't required, but I am clearing it just to make sure specifically for mem management
-        int[] tempLoc = new int[2]; //fucko boingo
-        //ArrayList<Integer> tempLoc = new ArrayList<>();
-        System.out.println(tempLocalCoords.length);
-        for (int i = 0; i< tempLocalCoords.length; i++) {
-            for(int a = 0; a<2; a++) { // variable a should NEVER be 2 only 0 and 1.
-                if ((tempLocalCoords[i][a] += currentLoc[a]) >=  0 && (tempLocalCoords[i][a] += currentLoc[a]) <= 7){
-                    //tempLoc.set(a, validLocalCoords[i][a] += currentLoc[a]); //this line ensures that the math is done on both X and Y and is put into tempLoc in the correct order
-                    tempLoc[a] = (tempLocalCoords[i][a] += currentLoc[a]);
-                    //System.out.println(tempLoc[a]);
-                }
-                //System.out.println("tempLoc index"+a+": "+tempLoc.get(a));
-                System.out.println("tempLoc index"+a+": "+tempLoc[a]);
-                validGlobalCoords.add(tempLoc); // FUCKY WUCKY
-            }
-        }
-        for (int c = 0; c < validGlobalCoords.size(); c++ ){
-            for (int b = 0; b<=1; b++) {
-                System.out.println("validGlobalCoords: "+c+"'"+b+": "+validGlobalCoords.get(c)[b]+", "+validGlobalCoords.get(c)[b]);
-                //System.out.println("validGlobalCoords: "+c+"'"+b+": "+validGlobalCoords.get(c).get(b)+", "+validGlobalCoords.get(c).get(b));
-            }
-        }
-        return validGlobalCoords; //this returns the required data-type, allows for easy checks eg: looking at the 2 valid board location would look like "validGlobalCoords.get(1)" which will return an array
-    }
+    //-- REMOVED calcValidKnightMoves -- this method was previously based around using a bunch of normal static arrays, and had to be remade, which is now calcValidKnightMovesArrLst
 
     public boolean isMoveValid(int oldY, int oldX, int newY, int newX) {
 
@@ -204,34 +168,19 @@ public class Board {
                     ArrayList<Integer> userSel = new ArrayList<>(Arrays.asList(newX,newY));
                     ArrayList<ArrayList<Integer>> locStorage;
                     locStorage = calcValidKnightMovesArrLst(oldX,oldY);
-                    System.out.println("Inside Knight: "+Arrays.toString(locStorage.toArray()));
-                    System.out.println(locStorage.size() + " : " + locStorage.get(0).size());
                     boolean validUserSelection = false;
-                    System.out.println("userSel: "+Arrays.toString(userSel.toArray()));
                     for (int i = 0; i < locStorage.size(); i++) {
-
-                        System.out.println("Current Index: " + i);
                         if (Objects.equals(locStorage.get(i).get(0), userSel.get(0)) && Objects.equals(locStorage.get(i).get(1), userSel.get(1))) {
-                            System.out.println("Valid user check");
                             validUserSelection = true;
                             if (boardState[locStorage.get(i).get(1)][locStorage.get(i).get(0)].getAffiliation() == boardState[oldY][oldX].getAffiliation()) { //check if both pieces are of same affiliation, therefore making the move invalid
-                                System.out.println(boardState[locStorage.get(i).get(0)][locStorage.get(i).get(1)].getAffiliation() + " " + boardState[locStorage.get(i).get(0)][locStorage.get(i).get(1)].getType() + " :Compared against: " + boardState[oldY][oldX].getAffiliation() + " " + boardState[oldY][oldX].getType());
-                                System.out.println("X: "+locStorage.get(i).get(0));
-                                System.out.println("Y: "+locStorage.get(i).get(1));
-                                System.out.println("oldX: "+oldX);
-                                System.out.println("oldY: "+oldY);
-                                System.out.println(boardState[locStorage.get(i).get(0)][locStorage.get(i).get(1)].getAffiliation() == boardState[oldX][oldY].getAffiliation());
-                                System.out.println("boardState if statement check");
                                 return false;
                             }
                         }
-
                     }
                     if (!validUserSelection) {
-                        System.out.println("validUserSelection outcome: " + validUserSelection);
                         return false; //this is just the flag that is needed to ensure we check through all valid knight move locations and make sure the user selected a spot the knight can legally go to
                     }
-                    locStorage.clear();
+                    locStorage.clear(); // Doesn't appear to be necessary, but I'm leaving it in to MAKE SURE nothing gets messed up, also helps with memory usage
                     break;
                 case BISHOP:
                     if(newX-oldX != newY-oldY)
