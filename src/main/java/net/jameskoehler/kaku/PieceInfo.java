@@ -1,4 +1,14 @@
 package net.jameskoehler.kaku;
 
-public interface PieceInfo {
+public enum PieceInfo {
+
+    ROOK,
+    KNIGHT,
+    BISHOP,
+    QUEEN,
+    KING,
+    PAWN,
+    WHITE,
+    BLACK,
+    BLANK
 }
