@@ -10,6 +10,8 @@ public class Piece {
     public Piece() {
         //Default constructor for specifically blank pieces
         type = PieceInfo.BLANK;
+        affiliation = PieceInfo.BLANK;
+        hasMoved = false;
     }
 
     public Piece(PieceInfo _type, PieceInfo _affiliation){
