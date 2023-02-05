@@ -45,7 +45,7 @@ public class Board {
 
     }
 
-    public int movePiece(int oldY, int oldX, int newY, int newX){
+    public int movePiece(int oldX, int oldY, int newX, int newY){
 
         /* Return codes:
         0: The move was made.
@@ -55,14 +55,14 @@ public class Board {
         4: Error.
          */
 
-        Piece oldPiece = boardState[oldY][oldX];
+        Piece oldPiece = boardState[oldX][oldY];
 
-        if(oldPiece.getType() != PieceInfo.BLANK && isMoveValid(oldY, oldX, newY, newX)){
+        if(oldPiece.getType() != PieceInfo.BLANK && isMoveValid(oldX, oldY, newX, newY)){
 
             System.out.println("Applying movement");
             tempBoardState = boardState;
-            tempBoardState[oldY][oldX] = new Piece();
-            tempBoardState[newY][newX] = oldPiece;
+            tempBoardState[oldX][oldY] = new Piece();
+            tempBoardState[newX][newY] = oldPiece;
 
             int kingX;
             int kingY;
@@ -97,15 +97,15 @@ public class Board {
 
                 oldPiece.setHasMoved(true);
 
-                boardState[oldY][oldX] = new Piece();
-                boardState[newY][newX] = oldPiece;
+                boardState[oldX][oldY] = new Piece();
+                boardState[newX][newY] = oldPiece;
 
                 if(oldPiece.getAffiliation() == PieceInfo.WHITE) // this makes it easier to convert to normal PGN notation later
-                    moveHistory.add(convertMoveToPGN(oldPiece, newX, newY));
+                    moveHistory.add(convertMoveToPGN(oldPiece, newY, newX));
                 else
-                    moveHistory.add(moveHistory.size() -1, moveHistory.get(moveHistory.size() - 1) + " " + convertMoveToPGN(oldPiece, newX, newY));
+                    moveHistory.add(moveHistory.size() -1, moveHistory.get(moveHistory.size() - 1) + " " + convertMoveToPGN(oldPiece, newY, newX));
 
-                return 0; //was previously true
+                return 0;
             }
 
             switch(oldPiece.getAffiliation()){
@@ -120,9 +120,9 @@ public class Board {
                     break;
             }
 
-            if(isKingInCheckMate(kingX, kingY)){ // if opposite king is in check
+            if(isKingInCheckMate(kingX, kingY)){ // if opposite king is in checkmate
 
-                switch(boardState[kingY][kingX].getAffiliation()){
+                switch(boardState[kingX][kingY].getAffiliation()){
 
                     case BLACK: // black is in checkmate; white won
                         moveHistory.add("1-0");
@@ -139,21 +139,21 @@ public class Board {
         return 1; // the pieces were of the same type
     }
 
-    public boolean isMoveValid(int oldY, int oldX, int newY, int newX) {
+    public boolean isMoveValid(int oldX, int oldY, int newX, int newY) {
 
-        if(oldY < 0 || oldY > 7 || oldX < 0 || oldX > 7 || newY < 0 || newY > 7 || newX < 0 || newX > 7) // verify in range
+        if(oldX < 0 || oldX > 7 || oldY < 0 || oldY > 7 || newX < 0 || newX > 7 || newY < 0 || newY > 7) // verify in range
             return false;
 
-        if(oldY == newY && oldX == newX) // The same spot is not a valid move
+        if(oldX == newX && oldY == newY) // The same spot is not a valid move
             return false;
 
-        Piece oldPiece = boardState[oldY][oldX];
-        Piece newPiece = boardState[newY][newX];
+        Piece oldPiece = boardState[oldX][oldY];
+        Piece newPiece = boardState[newX][newY];
 
         if(oldPiece.getAffiliation() != newPiece.getAffiliation()){
 
-            int distanceX = abs(newX - oldX);
-            int distanceY = abs(newY - oldY);
+            int distanceX = abs(newY - oldY);
+            int distanceY = abs(newX - oldX);
 
             int directionX;
             int directionY;
@@ -169,40 +169,40 @@ public class Board {
                         return false;
                     }
                     if (distanceX > 0) {
-                        for (int i = oldX + (newX-oldX)/(distanceX);  i>0 || i<7; i+=(newX-oldX)/(distanceX) ) {
-                            if (boardState[oldY][i].getType() != PieceInfo.BLANK && i!=newX) {
+                        for (int i = oldY + (newY-oldY)/(distanceX);  i>0 || i<7; i+=(newY-oldY)/(distanceX) ) {
+                            if (boardState[oldX][i].getType() != PieceInfo.BLANK && i!=newY) {
                                 return false;
                             }//this if statement checks if something is in the path between the rook and where the selection if the user's selection is on the X axis
-                            if (i==newX) break;
+                            if (i==newY) break;
                         }
                     }// be gay
                     if (distanceY > 0) {
-                        for (int i = oldY + (newY-oldY)/(distanceY);  i>0 || i<7; i+=(newY-oldY)/(distanceY) ) {
-                            if (boardState[i][oldX].getType() != PieceInfo.BLANK && i!=newY) {
+                        for (int i = oldX + (newX-oldX)/(distanceY);  i>0 || i<7; i+=(newX-oldX)/(distanceY) ) {
+                            if (boardState[i][oldY].getType() != PieceInfo.BLANK && i!=newX) {
                                 return false;
                             }//this if statement checks if something is in the path between the rook and where the user selected if the selection is on the Y axis
-                            if (i==newY) break;
+                            if (i==newX) break;
                         }
                     }// be straight
 
                     break;
                 case KNIGHT:
                     // has the weird L moves, can go over enemies and friendlies
-                    int[] coordDiff = {abs(oldY - newY), abs(oldX - newX)};
+                    int[] coordDiff = {abs(oldX - newX), abs(oldY - newY)};
 
                     if (!(coordDiff[0] == 1 && coordDiff[1] == 2) && !(coordDiff[0] == 2 && coordDiff[1] == 1))
                         return false;
                     break;
                 case BISHOP:
 
-                    if(!isDiagonalValid(oldX, oldY, newX, newY))
+                    if(!isDiagonalValid(oldY, oldX, newY, newX))
                         return false;
 
                     break;
                 case QUEEN:
-                    if(Math.abs(oldX-newX) == Math.abs(oldY-newY)){ // angled move
+                    if(Math.abs(oldY-newY) == Math.abs(oldX-newX)){ // angled move
 
-                        if(!isDiagonalValid(oldX, oldY, newX, newY))
+                        if(!isDiagonalValid(oldY, oldX, newY, newX))
                             return false;
                     }else{
 
@@ -212,19 +212,19 @@ public class Board {
                                 return false;
                             }// it appears the code below is re-used from rook math, could possibly be annexed and popped into a separate  method and used for both rook and queen
                             if (distanceX > 0) {
-                                for (int i = oldX + (newX-oldX)/(distanceX);  i>0 || i<7; i+=(newX-oldX)/(distanceX) ) {
-                                    if (boardState[oldY][i].getType() != PieceInfo.BLANK && i!=newX) {
+                                for (int i = oldY + (newY-oldY)/(distanceX);  i>0 || i<7; i+=(newY-oldY)/(distanceX) ) {
+                                    if (boardState[oldX][i].getType() != PieceInfo.BLANK && i!=newY) {
                                         return false;
                                     }//this if statement checks if something is in the path between the rook and where the selection if the user's selection is on the X axis
-                                    if (i==newX) break;
+                                    if (i==newY) break;
                                 }
                             }
                             if (distanceY > 0) {
-                                for (int i = oldY + (newY-oldY)/(distanceY);  i>0 || i<7; i+=(newY-oldY)/(distanceY) ) {
-                                    if (boardState[i][oldX].getType() != PieceInfo.BLANK && i!=newY) {
+                                for (int i = oldX + (newX-oldX)/(distanceY);  i>0 || i<7; i+=(newX-oldX)/(distanceY) ) {
+                                    if (boardState[i][oldY].getType() != PieceInfo.BLANK && i!=newX) {
                                         return false;
                                     }//this if statement checks if something is in the path between the rook and where the selection if the user's selection is on the Y axis
-                                    if (i==newY) break;
+                                    if (i==newX) break;
                                 }
                             }
                         }else
@@ -244,15 +244,15 @@ public class Board {
                         for(int x = 0; x < 8; x++){
 
                             if(boardState[y][x].getAffiliation() != oldPiece.getAffiliation())
-                                if(isMoveValid(y, x, newY, newX))
+                                if(isMoveValid(y, x, newX, newY))
                                     return false;    // this checks if any opposite pieces can move to the kings new spot. the kind cannot put himself into check.
                         }
                     }
                     break;
                 case PAWN:
-                    if(newY - oldY > 0 && oldPiece.getAffiliation() == PieceInfo.BLACK) // Pawns cannot move backwards
+                    if(newX - oldX > 0 && oldPiece.getAffiliation() == PieceInfo.BLACK) // Pawns cannot move backwards
                         return false;
-                    if(newY - oldY < 0 && oldPiece.getAffiliation() == PieceInfo.WHITE)
+                    if(newX - oldX < 0 && oldPiece.getAffiliation() == PieceInfo.WHITE)
                         return false;
 
                     if(!oldPiece.getHasMoved()) { // First move bonus check
@@ -280,12 +280,12 @@ public class Board {
 
                         if(oldPiece.getAffiliation() == PieceInfo.WHITE){
 
-                            if(boardState[oldY+1][oldX].getType() != PieceInfo.BLANK)
+                            if(boardState[oldX+1][oldY].getType() != PieceInfo.BLANK)
                                 return false;
                         }
                         if(oldPiece.getAffiliation() == PieceInfo.BLACK){
 
-                            if(boardState[oldY-1][oldX].getType() != PieceInfo.BLANK)
+                            if(boardState[oldX-1][oldY].getType() != PieceInfo.BLANK)
                                 return false;
                         }
                     }
@@ -332,31 +332,31 @@ public class Board {
         boardState = _boardState;
     }
 
-    private boolean isDiagonalValid(int oldX, int oldY, int newX, int newY){
+    private boolean isDiagonalValid(int oldY, int oldX, int newY, int newX){
 
         int directionX;
         int directionY;
         int checkX;
         int checkY;
 
-        if(Math.abs(oldX-newX) != Math.abs(oldY-newY))
+        if(Math.abs(oldY-newY) != Math.abs(oldX-newX))
             return false; // x and y have the same magnitude
 
-        directionX = Math.max(-1, Math.min(1, (oldX-newX)*-1) < -1 ? -1 : 1); // get the direction to iterate
-        directionY = Math.max(-1, Math.min(1, (oldY-newY)*-1) < -1 ? -1 : 1);
+        directionX = Math.max(-1, Math.min(1, (oldY-newY)*-1) < -1 ? -1 : 1); // get the direction to iterate
+        directionY = Math.max(-1, Math.min(1, (oldX-newX)*-1) < -1 ? -1 : 1);
 
-        checkX = oldX + directionX;
-        checkY = oldY + directionY;
+        checkX = oldY + directionX;
+        checkY = oldX + directionY;
 
         while(checkX < 8 && checkY < 8 && checkX > 0 && checkY > 0) {
 
-            if (boardState[checkY][checkX].getType() != PieceInfo.BLANK && checkX != newX && checkY != newY)
+            if (boardState[checkY][checkX].getType() != PieceInfo.BLANK && checkX != newY && checkY != newX)
                 return false;
 
-            if(boardState[checkY][checkX].getAffiliation() == boardState[oldX][oldY].getAffiliation() && checkX == newX && checkY == newY)
+            if(boardState[checkY][checkX].getAffiliation() == boardState[oldY][oldX].getAffiliation() && checkX == newY && checkY == newX)
                 return false;
 
-            if(checkX == newX)
+            if(checkX == newY)
                 return true; // Reached destination without issues
 
             checkX += directionX; // Iterate to next spot in path
@@ -366,7 +366,7 @@ public class Board {
         return true;
     }
 
-    private String convertMoveToPGN(Piece movedPiece, int newX, int newY){
+    private String convertMoveToPGN(Piece movedPiece, int newY, int newX){
 
         String PGN = "";
 
@@ -394,7 +394,7 @@ public class Board {
                 break;
         }
 
-        switch(newX){
+        switch(newY){
 
             case 0:
                 PGN += "a";
@@ -425,7 +425,7 @@ public class Board {
                 break;
         }
 
-        PGN += Integer.toString((newY * -1) + 8); // this inverts the numbers so they fit the actual chess board
+        PGN += Integer.toString((newX * -1) + 8); // this inverts the numbers so they fit the actual chess board
 
         return PGN;
     }
