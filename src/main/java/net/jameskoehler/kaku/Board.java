@@ -10,6 +10,11 @@ public class Board {
 
     private Vector<String> moveHistory = new Vector<String>();
 
+    private int bKingX;
+    private int bKingY;
+    private int wKingX;
+    private int wKingY;
+
     public Board() {
 
         boardState = new Piece[][]{
@@ -22,11 +27,22 @@ public class Board {
                 {new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE), new Piece(PieceInfo.PAWN, PieceInfo.WHITE),},
                 {new Piece(PieceInfo.ROOK, PieceInfo.WHITE), new Piece(PieceInfo.KNIGHT, PieceInfo.WHITE), new Piece(PieceInfo.BISHOP, PieceInfo.WHITE), new Piece(PieceInfo.QUEEN, PieceInfo.WHITE), new Piece(PieceInfo.KING, PieceInfo.WHITE), new Piece(PieceInfo.BISHOP, PieceInfo.WHITE), new Piece(PieceInfo.KNIGHT, PieceInfo.WHITE), new Piece(PieceInfo.ROOK, PieceInfo.WHITE)}
         };
+
+        bKingX = 4;
+        bKingY = 0;
+
+        wKingX = 4;
+        wKingY = 7;
     }
 
     public Board(Piece[][] _boardState){
 
         boardState = _boardState;
+    }
+
+    public Board(String algebraicNotation){ // TODO: This
+
+
     }
 
     public int movePiece(int oldY, int oldX, int newY, int newX){
@@ -48,12 +64,23 @@ public class Board {
             tempBoardState[oldY][oldX] = new Piece();
             tempBoardState[newY][newX] = oldPiece;
 
-            int kingX = 0; // had to initialize with a value because java was pissed
-            int kingY = 0;
+            int kingX;
+            int kingY;
 
+            switch(oldPiece.getAffiliation()){
 
-            // this might be improved by adding a location member variable to the Piece class, and then having a reference to each king in the board class
-            for(int y = 0; y < 7; y++){ // this is bad code //TODO: Make this good code... soon(tm)
+                case WHITE:
+                    kingX = wKingX;
+                    kingY = wKingY;
+                    break;
+                default:
+                    kingX = bKingX;
+                    kingY = bKingY;
+                    break;
+            }
+
+            /* old and slow and bad
+            for(int y = 0; y < 7; y++){
 
                 for(int x = 0; x < 7; x++){
 
@@ -64,6 +91,7 @@ public class Board {
                     }
                 }
             }
+            */
 
             if(!isKingInCheck(tempBoardState, oldPiece.getAffiliation(), kingX, kingY)){
 
@@ -80,16 +108,16 @@ public class Board {
                 return 0; //was previously true
             }
 
-            for(int y = 0; y < 7; y++){ // this is bad code //TODO: Make this good code... soon(tm)
+            switch(oldPiece.getAffiliation()){
 
-                for(int x = 0; x < 7; x++){
-
-                    if(boardState[y][x].getAffiliation() != oldPiece.getAffiliation() && boardState[y][x].getType() == PieceInfo.KING){ // this grabs the opposite king
-
-                        kingX = x;
-                        kingY = y;
-                    }
-                }
+                case WHITE:
+                    kingX = bKingX;
+                    kingY = bKingY;
+                    break;
+                default:
+                    kingX = wKingX;
+                    kingY = wKingY;
+                    break;
             }
 
             if(isKingInCheckMate(kingX, kingY)){ // if opposite king is in check
@@ -273,6 +301,7 @@ public class Board {
         return false;
     }
 
+    // TODO: find a better way of doing this shit
     public boolean isKingInCheck(Piece[][] boardToCheck, PieceInfo kingColor, int kingX, int kingY){
 
         for(int y = 0; y < 7; y++)
@@ -284,7 +313,7 @@ public class Board {
         return false; // The king is not in check
     }
 
-    public boolean isKingInCheckMate(int kingX, int kingY){ // this is terrible, yes, but its efficient. So suck my nuts.
+    public boolean isKingInCheckMate(int kingX, int kingY){
         //                                  left                          up                                                                                                       top left                                                                                                  right                                                                                                   below                                                                                               bottom right                                                                                             bottom left                                                                                                   top right
         return (isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX, kingY-1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX-1, kingY-1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX-1, kingY+1) && isMoveValid(kingX, kingY, kingX-1, kingY) == isMoveValid(kingX, kingY, kingX+1, kingY-1) && !isMoveValid(kingX, kingY, kingX+1, kingY-1) && isKingInCheck(boardState, getPiece(kingX, kingY).getAffiliation(), kingX, kingY));
     }
